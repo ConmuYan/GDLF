@@ -1,0 +1,22 @@
+# Requires Python 3.8 (recommended)
+# If using GPU, please install torch/torchvision wheels matching your CUDA toolkit.
+
+# Core DL stack
+torch==1.10.2
+torchvision==0.11.3
+
+# Numeric / image
+numpy>=1.19.5
+Pillow>=8.3.2
+opencv-python>=4.5.5.64
+
+# Visualization & logging
+matplotlib>=3.3.4
+tqdm>=4.62.3
+tensorboard>=2.9.0
+
+# Face processing (used by inference scripts)
+dlib==19.24.2
+
+# Build helper (for StyleGAN2 custom CUDA ops)
+ninja>=1.10.0

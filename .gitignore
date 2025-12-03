@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pt
+*.pth
+*.npy
+checkpoint/
+models/pth/
+output_images/
+output_images_ffhq/
+vis/
+nohup.out
+.DS_Store
+*.code-workspace

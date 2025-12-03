@@ -1,0 +1,202 @@
+<svg width="1400" height="1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 20px; font-weight: bold; fill: #2c3e50; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #34495e; }
+      .text { font-family: Arial, sans-serif; font-size: 12px; fill: #2c3e50; }
+      .small-text { font-family: Arial, sans-serif; font-size: 10px; fill: #7f8c8d; }
+      .code-text { font-family: 'Courier New', monospace; font-size: 10px; fill: #e74c3c; }
+      .layer-box { fill: #e3f2fd; stroke: #2196f3; stroke-width: 1; }
+      .style-box { fill: #fff3e0; stroke: #ff9800; stroke-width: 1; }
+      .resolution-box { fill: #e8f5e8; stroke: #27ae60; stroke-width: 1; }
+      .control-box { fill: #f3e5f5; stroke: #9c27b0; stroke-width: 1; }
+      .arrow { stroke: #34495e; stroke-width: 1; fill: none; marker-end: url(#arrowhead); }
+      .style-arrow { stroke: #ff9800; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#34495e" />
+    </marker>
+  </defs>
+  
+  <!-- 标题 -->
+  <text x="700" y="30" text-anchor="middle" class="title">StyleGAN2 架构：为什么需要18个风格向量？</text>
+  
+  <!-- 计算公式 -->
+  <rect x="50" y="50" width="400" height="80" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="5"/>
+  <text x="250" y="75" text-anchor="middle" class="subtitle">关键计算公式</text>
+  <text x="70" y="95" class="text">size = 1024 (分辨率)</text>
+  <text x="70" y="110" class="text">log_size = log₂(1024) = 10</text>
+  <text x="70" y="125" class="text">num_layers = (10-2)×2+1 = 17层</text>
+  
+  <!-- 风格向量总览 -->
+  <rect x="500" y="50" width="400" height="80" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="5"/>
+  <text x="700" y="75" text-anchor="middle" class="subtitle">风格向量分配</text>
+  <text x="520" y="95" class="text">17个卷积层 + 1个ToRGB层 = 18个风格向量</text>
+  <text x="520" y="110" class="text">每个风格向量控制一个特定的网络层</text>
+  <text x="520" y="125" class="text">实现从粗糙到精细的层级控制</text>
+  
+  <!-- 网络层级结构 -->
+  <text x="100" y="170" class="subtitle">网络层</text>
+  <text x="250" y="170" class="subtitle">分辨率</text>
+  <text x="400" y="170" class="subtitle">风格向量</text>
+  <text x="550" y="170" class="subtitle">控制内容</text>
+  
+  <!-- 初始层 -->
+  <rect x="50" y="190" width="120" height="30" class="layer-box" rx="3"/>
+  <text x="110" y="210" text-anchor="middle" class="text">conv1</text>
+  
+  <rect x="200" y="190" width="80" height="30" class="resolution-box" rx="3"/>
+  <text x="240" y="210" text-anchor="middle" class="text">4×4</text>
+  
+  <rect x="320" y="190" width="80" height="30" class="style-box" rx="3"/>
+  <text x="360" y="210" text-anchor="middle" class="text">向量1</text>
+  
+  <rect x="430" y="190" width="150" height="30" class="control-box" rx="3"/>
+  <text x="505" y="210" text-anchor="middle" class="small-text">初始特征调制</text>
+  
+  <!-- 上采样层组 -->
+  <g id="layer-group">
+    <!-- 4x4 -> 8x8 -->
+    <rect x="50" y="240" width="120" height="25" class="layer-box" rx="3"/>
+    <text x="110" y="257" text-anchor="middle" class="small-text">convs[0] (up)</text>
+    <rect x="200" y="240" width="80" height="25" class="resolution-box" rx="3"/>
+    <text x="240" y="257" text-anchor="middle" class="small-text">4×4→8×8</text>
+    <rect x="320" y="240" width="80" height="25" class="style-box" rx="3"/>
+    <text x="360" y="257" text-anchor="middle" class="small-text">向量2</text>
+    <rect x="430" y="240" width="150" height="25" class="control-box" rx="3"/>
+    <text x="505" y="257" text-anchor="middle" class="small-text">上采样调制</text>
+    
+    <rect x="50" y="270" width="120" height="25" class="layer-box" rx="3"/>
+    <text x="110" y="287" text-anchor="middle" class="small-text">convs[1]</text>
+    <rect x="200" y="270" width="80" height="25" class="resolution-box" rx="3"/>
+    <text x="240" y="287" text-anchor="middle" class="small-text">8×8</text>
+    <rect x="320" y="270" width="80" height="25" class="style-box" rx="3"/>
+    <text x="360" y="287" text-anchor="middle" class="small-text">向量3</text>
+    <rect x="430" y="270" width="150" height="25" class="control-box" rx="3"/>
+    <text x="505" y="287" text-anchor="middle" class="small-text">精细化调制</text>
+    
+    <!-- 8x8 -> 16x16 -->
+    <rect x="50" y="300" width="120" height="25" class="layer-box" rx="3"/>
+    <text x="110" y="317" text-anchor="middle" class="small-text">convs[2] (up)</text>
+    <rect x="200" y="300" width="80" height="25" class="resolution-box" rx="3"/>
+    <text x="240" y="317" text-anchor="middle" class="small-text">8×8→16×16</text>
+    <rect x="320" y="300" width="80" height="25" class="style-box" rx="3"/>
+    <text x="360" y="317" text-anchor="middle" class="small-text">向量4</text>
+    <rect x="430" y="300" width="150" height="25" class="control-box" rx="3"/>
+    <text x="505" y="317" text-anchor="middle" class="small-text">上采样调制</text>
+    
+    <rect x="50" y="330" width="120" height="25" class="layer-box" rx="3"/>
+    <text x="110" y="347" text-anchor="middle" class="small-text">convs[3]</text>
+    <rect x="200" y="330" width="80" height="25" class="resolution-box" rx="3"/>
+    <text x="240" y="347" text-anchor="middle" class="small-text">16×16</text>
+    <rect x="320" y="330" width="80" height="25" class="style-box" rx="3"/>
+    <text x="360" y="347" text-anchor="middle" class="small-text">向量5</text>
+    <rect x="430" y="330" width="150" height="25" class="control-box" rx="3"/>
+    <text x="505" y="347" text-anchor="middle" class="small-text">精细化调制</text>
+    
+    <!-- 继续其他层... -->
+    <text x="110" y="370" text-anchor="middle" class="text">...</text>
+    <text x="240" y="370" text-anchor="middle" class="text">...</text>
+    <text x="360" y="370" text-anchor="middle" class="text">...</text>
+    <text x="505" y="370" text-anchor="middle" class="text">...</text>
+    
+    <!-- 最后几层 -->
+    <rect x="50" y="390" width="120" height="25" class="layer-box" rx="3"/>
+    <text x="110" y="407" text-anchor="middle" class="small-text">convs[14] (up)</text>
+    <rect x="200" y="390" width="80" height="25" class="resolution-box" rx="3"/>
+    <text x="240" y="407" text-anchor="middle" class="small-text">512→1024</text>
+    <rect x="320" y="390" width="80" height="25" class="style-box" rx="3"/>
+    <text x="360" y="407" text-anchor="middle" class="small-text">向量16</text>
+    <rect x="430" y="390" width="150" height="25" class="control-box" rx="3"/>
+    <text x="505" y="407" text-anchor="middle" class="small-text">最终上采样</text>
+    
+    <rect x="50" y="420" width="120" height="25" class="layer-box" rx="3"/>
+    <text x="110" y="437" text-anchor="middle" class="small-text">convs[15]</text>
+    <rect x="200" y="420" width="80" height="25" class="resolution-box" rx="3"/>
+    <text x="240" y="437" text-anchor="middle" class="small-text">1024×1024</text>
+    <rect x="320" y="420" width="80" height="25" class="style-box" rx="3"/>
+    <text x="360" y="437" text-anchor="middle" class="small-text">向量17</text>
+    <rect x="430" y="420" width="150" height="25" class="control-box" rx="3"/>
+    <text x="505" y="437" text-anchor="middle" class="small-text">最终精细化</text>
+    
+    <!-- ToRGB层 -->
+    <rect x="50" y="450" width="120" height="25" class="layer-box" rx="3"/>
+    <text x="110" y="467" text-anchor="middle" class="small-text">to_rgb</text>
+    <rect x="200" y="450" width="80" height="25" class="resolution-box" rx="3"/>
+    <text x="240" y="467" text-anchor="middle" class="small-text">RGB输出</text>
+    <rect x="320" y="450" width="80" height="25" class="style-box" rx="3"/>
+    <text x="360" y="467" text-anchor="middle" class="small-text">向量18</text>
+    <rect x="430" y="450" width="150" height="25" class="control-box" rx="3"/>
+    <text x="505" y="467" text-anchor="middle" class="small-text">RGB转换调制</text>
+  </g>
+  
+  <!-- 层级控制说明 -->
+  <rect x="650" y="190" width="700" height="300" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="5"/>
+  <text x="1000" y="215" text-anchor="middle" class="subtitle">层级控制机制</text>
+  
+  <!-- 粗糙控制 -->
+  <rect x="680" y="240" width="200" height="60" fill="#ffebee" stroke="#f44336" stroke-width="1" rx="3"/>
+  <text x="780" y="260" text-anchor="middle" class="text">粗糙结构控制</text>
+  <text x="780" y="275" text-anchor="middle" class="small-text">风格向量 1-6</text>
+  <text x="780" y="290" text-anchor="middle" class="small-text">4×4 → 32×32</text>
+  
+  <!-- 中等控制 -->
+  <rect x="900" y="240" width="200" height="60" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="3"/>
+  <text x="1000" y="260" text-anchor="middle" class="text">中等细节控制</text>
+  <text x="1000" y="275" text-anchor="middle" class="small-text">风格向量 7-12</text>
+  <text x="1000" y="290" text-anchor="middle" class="small-text">64×64 → 256×256</text>
+  
+  <!-- 精细控制 -->
+  <rect x="1120" y="240" width="200" height="60" fill="#e8f5e8" stroke="#27ae60" stroke-width="1" rx="3"/>
+  <text x="1220" y="260" text-anchor="middle" class="text">精细细节控制</text>
+  <text x="1220" y="275" text-anchor="middle" class="small-text">风格向量 13-18</text>
+  <text x="1220" y="290" text-anchor="middle" class="small-text">512×512 → 1024×1024</text>
+  
+  <!-- 具体控制内容 -->
+  <text x="680" y="330" class="text">粗糙结构 (向量1-6):</text>
+  <text x="700" y="350" class="small-text">• 面部轮廓和头部形状</text>
+  <text x="700" y="365" class="small-text">• 整体布局和姿态</text>
+  <text x="700" y="380" class="small-text">• 基本的面部比例</text>
+  
+  <text x="680" y="410" class="text">中等细节 (向量7-12):</text>
+  <text x="700" y="430" class="small-text">• 眼睛、鼻子、嘴巴形状</text>
+  <text x="700" y="445" class="small-text">• 面部表情特征</text>
+  <text x="700" y="460" class="small-text">• 头发的基本形状</text>
+  
+  <text x="1000" y="330" class="text">精细细节 (向量13-18):</text>
+  <text x="1020" y="350" class="small-text">• 皮肤纹理和质感</text>
+  <text x="1020" y="365" class="small-text">• 头发的精细纹理</text>
+  <text x="1020" y="380" class="small-text">• 光照和阴影效果</text>
+  <text x="1020" y="395" class="small-text">• 最终的RGB颜色调制</text>
+  
+  <!-- PGTNet连接说明 -->
+  <rect x="50" y="520" width="1300" height="150" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="5"/>
+  <text x="700" y="545" text-anchor="middle" class="subtitle">PGTNet 中的应用</text>
+  
+  <text x="70" y="575" class="text">1. 编码器目标：</text>
+  <text x="90" y="595" class="small-text">将输入图像的256个空间位置特征转换为18个StyleGAN2风格向量</text>
+  <text x="90" y="610" class="code-text">self.conv = nn.Conv1d(256, 18, kernel_size=3, stride=1, padding=1)</text>
+  
+  <text x="70" y="635" class="text">2. 一一对应关系：</text>
+  <text x="90" y="655" class="small-text">• 每个风格向量控制StyleGAN2的一个特定层</text>
+  <text x="90" y="670" class="small-text">• 实现从图像特征到生成控制的精确映射</text>
+  
+  <!-- 为什么不能是其他数字 -->
+  <rect x="50" y="700" width="1300" height="120" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="5"/>
+  <text x="700" y="725" text-anchor="middle" class="subtitle">为什么必须是18个？</text>
+  
+  <text x="70" y="755" class="text">• 少于18个：无法为每个网络层提供独立控制，生成质量下降</text>
+  <text x="70" y="775" class="text">• 多于18个：多余的向量没有对应的网络层，增加复杂度但无益处</text>
+  <text x="70" y="795" class="text">• 正好18个：与StyleGAN2架构完美匹配，实现最优的控制精度</text>
+  
+  <!-- 箭头连接 -->
+  <line x1="170" y1="205" x2="200" y2="205" class="arrow"/>
+  <line x1="280" y1="205" x2="320" y2="205" class="style-arrow"/>
+  <line x1="400" y1="205" x2="430" y2="205" class="arrow"/>
+  
+  <!-- 总结框 -->
+  <rect x="50" y="850" width="1300" height="80" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="5"/>
+  <text x="700" y="875" text-anchor="middle" class="subtitle">总结</text>
+  <text x="700" y="895" text-anchor="middle" class="text">18个风格向量 = StyleGAN2的17个卷积层 + 1个ToRGB层</text>
+  <text x="700" y="915" text-anchor="middle" class="text">这个数字由网络架构决定，实现了从粗糙到精细的完整控制链</text>
+</svg>

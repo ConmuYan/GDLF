@@ -1,0 +1,166 @@
+<svg width="1400" height="900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #2c3e50; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #34495e; }
+      .text { font-family: Arial, sans-serif; font-size: 12px; fill: #2c3e50; }
+      .small-text { font-family: Arial, sans-serif; font-size: 10px; fill: #7f8c8d; }
+      .code-text { font-family: 'Courier New', monospace; font-size: 11px; fill: #e74c3c; }
+      .resnet-box { fill: #e8f5e8; stroke: #27ae60; stroke-width: 2; }
+      .transform-box { fill: #e3f2fd; stroke: #2196f3; stroke-width: 2; }
+      .conv-box { fill: #fff3e0; stroke: #ff9800; stroke-width: 2; }
+      .transformer-box { fill: #f3e5f5; stroke: #9c27b0; stroke-width: 2; }
+      .output-box { fill: #ffebee; stroke: #f44336; stroke-width: 2; }
+      .arrow { stroke: #34495e; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .highlight-arrow { stroke: #e74c3c; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
+    </marker>
+  </defs>
+  
+  <!-- 标题 -->
+  <text x="700" y="30" text-anchor="middle" class="title">c3 到 StyleGAN 潜在向量转换过程详解</text>
+  
+  <!-- ResNet 输出 c3 -->
+  <rect x="50" y="70" width="200" height="100" class="resnet-box" rx="5"/>
+  <text x="150" y="95" text-anchor="middle" class="subtitle">ResNet 第23层输出</text>
+  <text x="150" y="115" text-anchor="middle" class="text">c3: [batch, 512, 16, 16]</text>
+  <text x="150" y="135" text-anchor="middle" class="small-text">16×16分辨率特征图</text>
+  <text x="150" y="155" text-anchor="middle" class="small-text">512维语义特征</text>
+  
+  <!-- 第一步：flatten + permute -->
+  <rect x="300" y="70" width="220" height="100" class="transform-box" rx="5"/>
+  <text x="410" y="95" text-anchor="middle" class="subtitle">步骤1: 维度重排</text>
+  <text x="410" y="115" text-anchor="middle" class="code-text">flatten(2).permute(0,2,1)</text>
+  <text x="410" y="135" text-anchor="middle" class="text">[batch, 512, 16×16] → [batch, 256, 512]</text>
+  <text x="410" y="155" text-anchor="middle" class="small-text">256个空间位置，每个512维</text>
+  
+  <!-- 第二步：1D卷积 -->
+  <rect x="570" y="70" width="220" height="100" class="conv-box" rx="5"/>
+  <text x="680" y="95" text-anchor="middle" class="subtitle">步骤2: 1D卷积</text>
+  <text x="680" y="115" text-anchor="middle" class="code-text">Conv1d(256→18, k=3)</text>
+  <text x="680" y="135" text-anchor="middle" class="text">[batch, 256, 512] → [batch, 18, 512]</text>
+  <text x="680" y="155" text-anchor="middle" class="small-text">256位置 → 18个StyleGAN向量</text>
+  
+  <!-- 第三步：permute 为 Transformer 输入 -->
+  <rect x="840" y="70" width="220" height="100" class="transform-box" rx="5"/>
+  <text x="950" y="95" text-anchor="middle" class="subtitle">步骤3: Transformer输入</text>
+  <text x="950" y="115" text-anchor="middle" class="code-text">permute(1,0,2)</text>
+  <text x="950" y="135" text-anchor="middle" class="text">[batch, 18, 512] → [18, batch, 512]</text>
+  <text x="950" y="155" text-anchor="middle" class="small-text">tgt 输入格式</text>
+  
+  <!-- 详细的维度变化展示 -->
+  <rect x="50" y="220" width="1010" height="150" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="5"/>
+  <text x="555" y="245" text-anchor="middle" class="subtitle">详细维度变化过程</text>
+  
+  <!-- 原始 c3 -->
+  <rect x="80" y="270" width="120" height="80" fill="#e8f5e8" stroke="#27ae60" stroke-width="1" rx="3"/>
+  <text x="140" y="290" text-anchor="middle" class="text">原始 c3</text>
+  <text x="140" y="310" text-anchor="middle" class="small-text">[batch, 512,</text>
+  <text x="140" y="325" text-anchor="middle" class="small-text">16, 16]</text>
+  <text x="140" y="340" text-anchor="middle" class="small-text">空间特征图</text>
+  
+  <!-- flatten 后 -->
+  <rect x="230" y="270" width="120" height="80" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" rx="3"/>
+  <text x="290" y="290" text-anchor="middle" class="text">flatten(2)</text>
+  <text x="290" y="310" text-anchor="middle" class="small-text">[batch, 512,</text>
+  <text x="290" y="325" text-anchor="middle" class="small-text">256]</text>
+  <text x="290" y="340" text-anchor="middle" class="small-text">展平空间维</text>
+  
+  <!-- permute 后 -->
+  <rect x="380" y="270" width="120" height="80" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" rx="3"/>
+  <text x="440" y="290" text-anchor="middle" class="text">permute</text>
+  <text x="440" y="310" text-anchor="middle" class="small-text">[batch, 256,</text>
+  <text x="440" y="325" text-anchor="middle" class="small-text">512]</text>
+  <text x="440" y="340" text-anchor="middle" class="small-text">交换维度</text>
+  
+  <!-- 1D卷积后 -->
+  <rect x="530" y="270" width="120" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="3"/>
+  <text x="590" y="290" text-anchor="middle" class="text">Conv1d</text>
+  <text x="590" y="310" text-anchor="middle" class="small-text">[batch, 18,</text>
+  <text x="590" y="325" text-anchor="middle" class="small-text">512]</text>
+  <text x="590" y="340" text-anchor="middle" class="small-text">18个查询</text>
+  
+  <!-- 最终 tgt -->
+  <rect x="680" y="270" width="120" height="80" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1" rx="3"/>
+  <text x="740" y="290" text-anchor="middle" class="text">tgt 输入</text>
+  <text x="740" y="310" text-anchor="middle" class="small-text">[18, batch,</text>
+  <text x="740" y="325" text-anchor="middle" class="small-text">512]</text>
+  <text x="740" y="340" text-anchor="middle" class="small-text">Transformer格式</text>
+  
+  <!-- 组 Transformer 处理 -->
+  <rect x="50" y="420" width="300" height="120" class="transformer-box" rx="5"/>
+  <text x="200" y="445" text-anchor="middle" class="subtitle">组 Transformer 处理</text>
+  <text x="200" y="465" text-anchor="middle" class="text">输入: tgt [18, batch, 512]</text>
+  <text x="200" y="485" text-anchor="middle" class="text">memory: p1 [4096, batch, 512]</text>
+  <text x="200" y="505" text-anchor="middle" class="small-text">• 分组注意力机制</text>
+  <text x="200" y="520" text-anchor="middle" class="small-text">• 全局-局部融合</text>
+  
+  <!-- 输出处理 -->
+  <rect x="400" y="420" width="250" height="120" class="transform-box" rx="5"/>
+  <text x="525" y="445" text-anchor="middle" class="subtitle">输出处理</text>
+  <text x="525" y="465" text-anchor="middle" class="code-text">query_fine.permute(1,0,2)</text>
+  <text x="525" y="485" text-anchor="middle" class="text">[18, batch, 512] → [batch, 18, 512]</text>
+  <text x="525" y="505" text-anchor="middle" class="small-text">转换为标准输出格式</text>
+  
+  <!-- 残差连接 -->
+  <rect x="700" y="420" width="250" height="120" class="output-box" rx="5"/>
+  <text x="825" y="445" text-anchor="middle" class="subtitle">残差连接</text>
+  <text x="825" y="465" text-anchor="middle" class="code-text">codes = query_fine + c</text>
+  <text x="825" y="485" text-anchor="middle" class="text">最终输出: [batch, 18, 512]</text>
+  <text x="825" y="505" text-anchor="middle" class="small-text">18个StyleGAN潜在向量</text>
+  
+  <!-- 关键信息说明 -->
+  <rect x="50" y="580" width="900" height="280" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="5"/>
+  <text x="500" y="605" text-anchor="middle" class="subtitle">关键转换机制解析</text>
+  
+  <text x="70" y="635" class="text">1. 空间到语义的映射：</text>
+  <text x="90" y="655" class="small-text">• 从16×16=256个空间位置压缩到18个语义向量</text>
+  <text x="90" y="675" class="small-text">• 1D卷积保持了空间结构信息，不是简单的全连接</text>
+  <text x="90" y="695" class="small-text">• kernel_size=3 考虑了局部空间关系</text>
+  
+  <text x="70" y="725" class="text">2. 为什么是18个向量？</text>
+  <text x="90" y="745" class="small-text">• StyleGAN使用18个512维风格向量控制不同分辨率层的生成</text>
+  <text x="90" y="765" class="small-text">• 从粗糙结构(低分辨率层)到精细细节(高分辨率层)</text>
+  <text x="90" y="785" class="small-text">• 每个向量负责特定的视觉属性和生成层级</text>
+  
+  <text x="70" y="815" class="text">3. 组 Transformer 的作用：</text>
+  <text x="90" y="835" class="small-text">• tgt(c3): 来自低分辨率但语义丰富的特征</text>
+  <text x="90" y="855" class="small-text">• memory(p1): 来自高分辨率但细节丰富的特征</text>
+  
+  <!-- 箭头连接 -->
+  <line x1="250" y1="120" x2="300" y2="120" class="highlight-arrow"/>
+  <line x1="520" y1="120" x2="570" y2="120" class="highlight-arrow"/>
+  <line x1="790" y1="120" x2="840" y2="120" class="highlight-arrow"/>
+  
+  <!-- 详细流程箭头 -->
+  <line x1="200" y1="310" x2="230" y2="310" class="arrow"/>
+  <line x1="350" y1="310" x2="380" y2="310" class="arrow"/>
+  <line x1="500" y1="310" x2="530" y2="310" class="arrow"/>
+  <line x1="650" y1="310" x2="680" y2="310" class="arrow"/>
+  
+  <!-- 垂直连接 -->
+  <line x1="950" y1="170" x2="200" y2="420" class="highlight-arrow"/>
+  <line x1="350" y1="480" x2="400" y2="480" class="arrow"/>
+  <line x1="650" y1="480" x2="700" y2="480" class="arrow"/>
+  
+  <!-- 代码行号标注 -->
+  <rect x="1000" y="580" width="350" height="280" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="5"/>
+  <text x="1175" y="605" text-anchor="middle" class="subtitle">对应代码行</text>
+  
+  <text x="1020" y="635" class="text">第100行:</text>
+  <text x="1040" y="655" class="code-text">c3 = x  # [batch, 512, 16, 16]</text>
+  
+  <text x="1020" y="685" class="text">第108行:</text>
+  <text x="1040" y="705" class="code-text">c3 = c3.flatten(2).permute(0,2,1)</text>
+  
+  <text x="1020" y="735" class="text">第109行:</text>
+  <text x="1040" y="755" class="code-text">c = self.conv(c3)</text>
+  
+  <text x="1020" y="785" class="text">第110行:</text>
+  <text x="1040" y="805" class="code-text">c3 = c.permute(1,0,2)</text>
+  
+  <text x="1020" y="835" class="text">第115行:</text>
+  <text x="1040" y="855" class="code-text">query_fine = self.transformerlayer_fine(c3, p1)</text>
+</svg>
